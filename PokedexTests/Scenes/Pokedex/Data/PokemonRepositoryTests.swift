@@ -2,6 +2,7 @@ import Foundation
 import Testing
 @testable import Pokedex
 
+// MARK: makeSUT method
 fileprivate extension PokedexRepositoryTests {
     typealias MakeSUTReturn = (
         sut: PokedexRepository,
@@ -16,6 +17,7 @@ fileprivate extension PokedexRepositoryTests {
     }
 }
 
+// MARK: Tests
 struct PokedexRepositoryTests {
     @Test("fetchPokedex successfully decodes valid response")
     func successfulDecoding() async throws {
