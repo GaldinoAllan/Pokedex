@@ -22,6 +22,10 @@ struct NavigationFactory {
                     )
                 )
             )
+        case .pokemonDetail(let pokemon):
+            PokemonDetailView(
+                pokemon: pokemon
+            )
         }
     }
 }

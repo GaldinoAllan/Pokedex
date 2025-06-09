@@ -88,7 +88,7 @@ private extension PokedexView {
     var pokemonListView: some View {
         List(sorted(viewModel.pokemons)) { pokemon in
             Button {
-                print("Navigate to details")
+                router.navigate(to: .pokemonDetail(pokemon: pokemon))
             } label: {
                 PokemonCardView(pokemon: pokemon)
                     .onAppear {
