@@ -9,13 +9,13 @@ struct PokedexView: View {
         VStack(spacing: 0) {
             header
             searchBar
-            pokemonGrid
+            pokemonList
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .background(Color(.systemRed))
         .ignoresSafeArea(edges: .bottom)
         .task {
-            viewModel.loadInitialState()
+            await viewModel.loadInitialState()
         }
         .navigationBarHidden(true)
     }
@@ -51,18 +51,9 @@ struct PokedexView: View {
         .background(Color(.systemRed))
     }
     
-    private var pokemonGrid: some View {
+    private var pokemonList: some View {
         ZStack {
-            switch viewModel.state {
-            case .idle:
-                EmptyView()
-            case .loading:
-                loadingView
-            case .failure:
-                failureView
-            case .success:
-                pokemonListView
-            }
+            listContentView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemRed))
@@ -76,18 +67,39 @@ struct PokedexView: View {
 }
 
 private extension PokedexView {
+    var listContentView: some View {
+        ZStack {
+            switch viewModel.state {
+            case .idle:
+                EmptyView()
+            case .loading:
+                loadingView
+            case .failure:
+                failureView
+            case .success:
+                pokemonListView
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedCorner(radius: 16, corners: [.topLeft, .topRight]))
+    }
+    
     var pokemonListView: some View {
         List(sorted(viewModel.pokemons)) { pokemon in
             Button {
                 print("Navigate to details")
             } label: {
                 PokemonCardView(pokemon: pokemon)
+                    .onAppear {
+                        Task {
+                            await viewModel.loadMoreIfNeeded(currentItem: pokemon)
+                        }
+                    }
             }
             .listRowSeparator(.hidden)
         }
         .listStyle(.inset)
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
     }
     
     var loadingView: some View {
@@ -98,9 +110,7 @@ private extension PokedexView {
                 .foregroundColor(.secondary)
                 .padding(.top)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedCorner(radius: 16, corners: [.topLeft, .topRight]))
+        
     }
     
     var failureView: some View {
@@ -118,14 +128,11 @@ private extension PokedexView {
             
             Button("Try Again") {
                 Task {
-                    viewModel.loadInitialState()
+                    await viewModel.loadInitialState()
                 }
             }
             .buttonStyle(.borderedProminent)
         }
-        .padding()
-        .background(Color(.systemBackground))
-        .frame(maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
     }
 }
 
