@@ -1,13 +1,8 @@
-//
-//  ContentView.swift
-//  Pokedex
-//
-//  Created by Allan Galdino on 09/06/25.
-//
-
 import SwiftUI
 
-struct ContentView: View {
+// Template view crated by the project initial setup
+
+struct PokedexView: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -20,5 +15,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    PokedexView()
 }
