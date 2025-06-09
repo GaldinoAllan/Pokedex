@@ -10,11 +10,18 @@ struct NavigationFactory {
     /// 
     /// - Parameter destination: The destination to create a view for
     /// - Returns: A view corresponding to the destination
+    @MainActor
     @ViewBuilder
     static func createView(for destination: AppDestination) -> some View {
         switch destination {
         case .pokedex:
-            PokedexView()
+            PokedexView(
+                viewModel: PokedexViewModel(
+                    useCase: PokedexUseCase(
+                        repository: PokedexRepository()
+                    )
+                )
+            )
         }
     }
 }
