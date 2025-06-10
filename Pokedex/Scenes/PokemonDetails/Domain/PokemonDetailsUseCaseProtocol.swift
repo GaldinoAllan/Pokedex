@@ -5,7 +5,7 @@ import Foundation
 /// This protocol implements the Use Case pattern from Clean Architecture,
 /// encapsulating a specific business rule: fetching Pokémon Details
 protocol PokemonDetailsUseCaseProtocol {
-    /// Executes the Pokémon fetch with pagination
+    /// Executes the Pokémon Details fetch
     ///
     /// - Parameters:
     ///   - id: ID of the selected Pokemon

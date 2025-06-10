@@ -15,7 +15,12 @@ final class Router: ObservableObject {
         navigationPath.append(destination)
     }
     
+    /// Navigates back from any screen
+    func navigateBack() {
+        guard !navigationPath.isEmpty else { return }
+        navigationPath.removeLast()
+    }
+    
     // Other methods could be added but they are not in use in the current app, for example:
-    // func navigateBack()
     // func navigateToRoot()
 }

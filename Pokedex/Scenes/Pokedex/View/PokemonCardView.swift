@@ -5,31 +5,13 @@ struct PokemonCardView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            AsyncImage(url: pokemon.imageURL) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 80, height: 80)
-                case .failure(_):
-                    Image(systemName: "photo")
-                        .font(.system(size: 40))
-                        .foregroundColor(.gray)
-                        .frame(width: 80, height: 80)
-                case .empty:
-                    ProgressView()
-                        .frame(width: 80, height: 80)
-                @unknown default:
-                    EmptyView()
-                }
-            }
+            PokeAsyncImage(url: pokemon.imageURL, size: 80)
             Text(pokemon.name.capitalized)
                 .font(.headline)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)   
             Spacer()
-            Text("#\(String(format: "%03d", pokemon.id))")
+            Text(pokemon.id.format03)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             

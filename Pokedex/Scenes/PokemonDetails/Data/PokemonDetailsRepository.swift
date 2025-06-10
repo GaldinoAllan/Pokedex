@@ -15,6 +15,8 @@ final class PokemonDetailsRepository: PokemonDetailRepositoryProtocol {
         guard let url = URL(string: "\(API.pokemon)/\(id)") else {
             throw ApiError.invalidURL
         }
-        return try await client.get(url)
+        let response: PokemonDetailsResponse = try await client.get(url)
+        
+        return response.toPokemonDetails()
     }
 }

@@ -26,25 +26,4 @@ struct PokemonDetails: Decodable, Equatable {
     
     /// Pokémon array of statistics
     let stats: [StatResource]
-    
-    /// This struct defines a Pokémon statistic
-    struct StatResource: Decodable, Equatable {
-        let baseStat: Int
-        let stat: NameAPIResource
-    }
-    
-    /// This struct defines the Pokémon ability
-    struct AbilityResource: Decodable, Equatable {
-        let ability: NameAPIResource
-    }
-
-    /// This struct defines the Pokémon type
-    struct TypeResource: Decodable, Equatable {
-        let type: NameAPIResource
-    }
-
-    /// This struct is a simple struct with a name that is re-used for Stat, Ability and Type
-    struct NameAPIResource: Decodable, Equatable {
-        let name: String
-    }
 }

@@ -73,16 +73,20 @@ private extension PokedexView {
             case .idle:
                 EmptyView()
             case .loading:
-                loadingView
+                LoadingView(message: "Loading Pokémon...")
             case .failure:
-                failureView
+                FeedbackView(description: "Sorry, couldn't load the Pokémon list at this moment, try again later") {
+                    Task {
+                        await viewModel.loadInitialState()
+                    }
+                }
             case .success:
                 pokemonListView
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemBackground))
-        .clipShape(RoundedCorner(radius: 16, corners: [.topLeft, .topRight]))
+        .clipShape(RoundedCorner(radius: 30, corners: [.topLeft, .topRight]))
     }
     
     var pokemonListView: some View {
@@ -100,39 +104,6 @@ private extension PokedexView {
             .listRowSeparator(.hidden)
         }
         .listStyle(.inset)
-    }
-    
-    var loadingView: some View {
-        VStack {
-            ProgressView()
-                .scaleEffect(1.5)
-            Text("Loading Pokémon...")
-                .foregroundColor(.secondary)
-                .padding(.top)
-        }
-        
-    }
-    
-    var failureView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 50))
-                .foregroundColor(.orange)
-            
-            Text("Oops! Something went wrong")
-                .font(.headline)
-            
-            Text("Sorry, couldn't load the Pokémon list at this moment, try again later")
-                .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
-            
-            Button("Try Again") {
-                Task {
-                    await viewModel.loadInitialState()
-                }
-            }
-            .buttonStyle(.borderedProminent)
-        }
     }
 }
 
