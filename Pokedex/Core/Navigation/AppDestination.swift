@@ -7,6 +7,8 @@ import Foundation
 enum AppDestination: Hashable {
     /// Navigate to main Pokedex Screen
     case pokedex
+    /// Navigate to Pokemon details screen
+    case pokemonDetail(pokemon: Pokemon)
     
     // Other destinations can be added here:
     // case pokemonDetails
@@ -19,6 +21,9 @@ extension AppDestination {
         switch self {
         case .pokedex:
             hasher.combine("pokedex")
+        case .pokemonDetail(let pokemon):
+            hasher.combine("pokemonDetail")
+            hasher.combine(pokemon.id)
         }
     }
 }

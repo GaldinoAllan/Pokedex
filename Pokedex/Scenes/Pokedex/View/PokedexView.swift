@@ -5,6 +5,16 @@ struct PokedexView: View {
     @State private var sortByName = false
     @EnvironmentObject private var router: Router
     
+    // MARK: - Constants
+    private enum Constants {
+        static let title = "Pokédex"
+        static let searchPlaceholder = "Search Pokémon"
+        static let loadingMessage = "Loading Pokémon..."
+        static let errorMessage = "Sorry, couldn't load the Pokémon list at this moment, try again later"
+        static let sortByNameIcon = "textformat"
+        static let sortByNumberIcon = "number"
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             header
@@ -22,7 +32,7 @@ struct PokedexView: View {
     
     private var header: some View {
         HStack {
-            Text("Pokédex")
+            Text(Constants.title)
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundStyle(Color(.white))
@@ -33,16 +43,16 @@ struct PokedexView: View {
     }
     
     private var searchBar: some View {
-        HStack(spacing: 12) {
-            TextField("Search Pokémon", text: $viewModel.searchQuery)
+        HStack(spacing: Layout.Spacing.medium) {
+            TextField(Constants.searchPlaceholder, text: $viewModel.searchQuery)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             Button {
                 sortByName.toggle()
             } label: {
-                Image(systemName: sortByName ? "textformat" : "number")
+                Image(systemName: sortByName ? Constants.sortByNameIcon : Constants.sortByNumberIcon)
                     .foregroundColor(.primary)
-                    .padding(10)
+                    .padding(Layout.Padding.small)
                     .background(Color(.systemGray6))
                     .clipShape(.circle)
             }
@@ -57,8 +67,8 @@ struct PokedexView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemRed))
-        .padding(.horizontal, 4)
-        .padding(.top, 16)
+        .padding(.horizontal, Layout.Padding.extraSmall)
+        .padding(.top, Layout.Padding.large)
     }
     
     private func sorted(_ pokemons: [Pokemon]) -> [Pokemon] {
@@ -73,22 +83,26 @@ private extension PokedexView {
             case .idle:
                 EmptyView()
             case .loading:
-                loadingView
+                LoadingView(message: Constants.loadingMessage)
             case .failure:
-                failureView
+                FeedbackView(description: Constants.errorMessage) {
+                    Task {
+                        await viewModel.loadInitialState()
+                    }
+                }
             case .success:
                 pokemonListView
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemBackground))
-        .clipShape(RoundedCorner(radius: 16, corners: [.topLeft, .topRight]))
+        .clipShape(RoundedCorner(radius: Layout.CornerRadius.extraLarge, corners: [.topLeft, .topRight]))
     }
     
     var pokemonListView: some View {
         List(sorted(viewModel.pokemons)) { pokemon in
             Button {
-                print("Navigate to details")
+                router.navigate(to: .pokemonDetail(pokemon: pokemon))
             } label: {
                 PokemonCardView(pokemon: pokemon)
                     .onAppear {
@@ -100,39 +114,6 @@ private extension PokedexView {
             .listRowSeparator(.hidden)
         }
         .listStyle(.inset)
-    }
-    
-    var loadingView: some View {
-        VStack {
-            ProgressView()
-                .scaleEffect(1.5)
-            Text("Loading Pokémon...")
-                .foregroundColor(.secondary)
-                .padding(.top)
-        }
-        
-    }
-    
-    var failureView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 50))
-                .foregroundColor(.orange)
-            
-            Text("Oops! Something went wrong")
-                .font(.headline)
-            
-            Text("Sorry, couldn't load the Pokémon list at this moment, try again later")
-                .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
-            
-            Button("Try Again") {
-                Task {
-                    await viewModel.loadInitialState()
-                }
-            }
-            .buttonStyle(.borderedProminent)
-        }
     }
 }
 

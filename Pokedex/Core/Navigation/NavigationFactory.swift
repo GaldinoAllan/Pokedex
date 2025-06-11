@@ -22,6 +22,16 @@ struct NavigationFactory {
                     )
                 )
             )
+        case .pokemonDetail(let pokemon):
+            PokemonDetailView(
+                pokemon: pokemon,
+                viewModel: PokemonDetailViewModel(
+                    pokemon: pokemon,
+                    useCase: PokemonDetailsUseCase(
+                        repository: PokemonDetailsRepository()
+                    )
+                )
+            )
         }
     }
 }
