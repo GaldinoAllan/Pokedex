@@ -4,8 +4,8 @@ struct PokemonCardView: View {
     let pokemon: Pokemon
     
     var body: some View {
-        HStack(spacing: 12) {
-            PokeAsyncImage(url: pokemon.imageURL, size: 80)
+        HStack(spacing: Layout.Spacing.medium) {
+            PokeAsyncImage(url: pokemon.imageURL, size: Layout.Frame.pokemonCardImageSize)
             Text(pokemon.name.capitalized)
                 .font(.headline)
                 .fontWeight(.bold)
@@ -18,8 +18,13 @@ struct PokemonCardView: View {
         }
         .padding()
         .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .cornerRadius(Layout.CornerRadius.medium)
+        .shadow(
+            color: .black.opacity(Layout.Shadow.opacity), 
+            radius: Layout.Shadow.radius, 
+            x: Layout.Shadow.offsetX, 
+            y: Layout.Shadow.offsetY
+        )
     }
 }
 

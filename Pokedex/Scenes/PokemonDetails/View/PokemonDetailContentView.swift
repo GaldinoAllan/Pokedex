@@ -3,6 +3,20 @@ import SwiftUI
 struct PokemonDetailContentView: View {
     let pokemon: PokemonDetails
     
+    // MARK: - Constants
+    private enum Constants {
+        static let pokeballBackgroundImage = "pokeball_background"
+        static let aboutTitle = "About"
+        static let baseStatsTitle = "Base Stats"
+        static let weightTitle = "Weight"
+        static let heightTitle = "Height"
+        static let movesTitle = "Moves"
+        static let weightIcon = "scalemass"
+        static let heightIcon = "ruler"
+        static let abilitiesSeparator = "\n"
+        static let statValueFormat = "%03d"
+    }
+    
     var body: some View {
         ZStack {
             pokemon.primaryColor.ignoresSafeArea()
@@ -10,8 +24,8 @@ struct PokemonDetailContentView: View {
                 headerSection
                 contentSection
             }
-            PokeAsyncImage(url: pokemon.imageURL, size: 250)
-                .offset(y: -200)
+            PokeAsyncImage(url: pokemon.imageURL, size: Layout.Frame.pokemonDetailImageSize)
+                .offset(y: Layout.Offset.pokemonImageY)
         }
     }
 }
@@ -20,34 +34,34 @@ struct PokemonDetailContentView: View {
 private extension PokemonDetailContentView {
     var headerSection: some View {
         ZStack {
-            Image("pokeball_background")
+            Image(Constants.pokeballBackgroundImage)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 250, height: 250)
-                .opacity(0.1)
-                .offset(x: 70, y: 0)
+                .frame(width: Layout.Frame.pokeballBackgroundSize, height: Layout.Frame.pokeballBackgroundSize)
+                .opacity(Layout.Opacity.light)
+                .offset(x: Layout.Offset.pokeballBackgroundX, y: Layout.Offset.pokeballBackgroundY)
         }
         .background(pokemon.primaryColor)
     }
     
     var contentSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: Layout.Spacing.small) {
             typesSection
             aboutSection
             Spacer()
             statsSection
         }
         .padding()
-        .padding(.top, 40)
+        .padding(.top, Layout.Padding.xxxLarge)
         .background(
-            RoundedRectangle(cornerRadius: 30)
+            RoundedRectangle(cornerRadius: Layout.CornerRadius.extraLarge)
                 .fill(Color(.systemBackground))
-                .padding(4)
+                .padding(Layout.Padding.extraSmall)
         )
     }
 
     var typesSection: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Layout.Spacing.medium) {
             ForEach(pokemon.types, id: \.type.name) { type in
                 typeBadge(for: type)
             }
@@ -55,26 +69,26 @@ private extension PokemonDetailContentView {
     }
 
     var aboutSection: some View {
-        VStack(spacing: 16) {
-            sectionTitle("About")
+        VStack(spacing: Layout.Spacing.large) {
+            sectionTitle(Constants.aboutTitle)
             HStack(alignment: .top) {
                 PokemonCharacteristic(
-                    characteristicTitle: "Weight",
+                    characteristicTitle: Constants.weightTitle,
                     characteristicLabel: pokemon.formattedWeight,
-                    characteristicLabelImage: "scalemass"
+                    characteristicLabelImage: Constants.weightIcon
                 )
                 .frame(maxWidth: .infinity)
                 
                 PokemonCharacteristic(
-                    characteristicTitle: "Height",
+                    characteristicTitle: Constants.heightTitle,
                     characteristicLabel: pokemon.formattedHeight,
-                    characteristicLabelImage: "ruler"
+                    characteristicLabelImage: Constants.heightIcon
                 )
                 .frame(maxWidth: .infinity)
                 
                 PokemonCharacteristic(
-                    characteristicTitle: "Moves",
-                    characteristicText: pokemon.abilities.map { $0.ability.name.capitalized }.joined(separator: "\n")
+                    characteristicTitle: Constants.movesTitle,
+                    characteristicText: pokemon.abilities.map { $0.ability.name.capitalized }.joined(separator: Constants.abilitiesSeparator)
                 )
                 .frame(maxWidth: .infinity)
             }
@@ -83,8 +97,8 @@ private extension PokemonDetailContentView {
     }
 
     var statsSection: some View {
-        VStack(spacing: 12) {
-            sectionTitle("Base Stats")
+        VStack(spacing: Layout.Spacing.medium) {
+            sectionTitle(Constants.baseStatsTitle)
             VStack(spacing: .zero) {
                 ForEach(pokemon.stats, id: \.stat.name) { stat in
                     statRow(for: stat)
@@ -104,30 +118,30 @@ private extension PokemonDetailContentView {
     func typeBadge(for type: TypeResource) -> some View {
         Text(type.type.name.capitalized)
             .font(.subheadline.bold())
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, Layout.Padding.large)
+            .padding(.vertical, Layout.Padding.small)
             .background(type.color)
             .foregroundColor(.white)
-            .cornerRadius(20)
+            .cornerRadius(Layout.CornerRadius.large)
     }
     
     func statRow(for stat: StatResource) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Layout.Spacing.medium) {
             Text(stat.shortName)
                 .fontWeight(.bold)
                 .font(.footnote)
-                .frame(minWidth: 50, alignment: .trailing)
+                .frame(minWidth: Layout.Frame.mediumWidth, alignment: .trailing)
                 .foregroundColor(pokemon.primaryColor)
             Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .frame(width: 1, height: 20)
-            Text(String(format: "%03d", stat.baseStat))
+                .fill(Color.gray.opacity(Layout.Opacity.medium))
+                .frame(width: Layout.Frame.dividerWidth, height: Layout.Frame.mediumHeight)
+            Text(String(format: Constants.statValueFormat, stat.baseStat))
                 .monospacedDigit()
                 .font(.footnote)
-                .frame(width: 40, alignment: .leading)
-            ProgressView(value: Double(stat.baseStat), total: 256)
+                .frame(width: Layout.Frame.smallWidth, alignment: .leading)
+            ProgressView(value: Double(stat.baseStat), total: Layout.Stats.maxValue)
                 .progressViewStyle(LinearProgressViewStyle(tint: pokemon.primaryColor))
-                .frame(height: 8)
+                .frame(height: Layout.Frame.smallHeight)
         }
     }
 }

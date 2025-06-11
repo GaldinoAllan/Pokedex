@@ -8,9 +8,9 @@ struct FeedbackView: View {
     var onButtonTap: () -> Void
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Layout.Spacing.large) {
             Image(systemName: imageName)
-                .font(.system(size: 50))
+                .font(.system(size: Layout.Frame.iconSize))
                 .foregroundColor(.orange)
             
             Text(title)

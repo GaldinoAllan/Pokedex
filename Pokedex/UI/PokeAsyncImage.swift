@@ -4,7 +4,12 @@ struct PokeAsyncImage: View {
     let url: URL?
     let size: CGFloat
     
-    init(url: URL?, size: CGFloat = 200) {
+    // MARK: - Constants
+    private enum Constants {
+        static let placeholderIcon = "photo"
+    }
+    
+    init(url: URL?, size: CGFloat = Layout.Frame.defaultImageSize) {
         self.url = url
         self.size = size
     }
@@ -15,7 +20,7 @@ struct PokeAsyncImage: View {
             case .success(let image):
                 image.resizable().scaledToFit()
             case .failure(_):
-                Image(systemName: "photo").foregroundColor(.gray)
+                Image(systemName: Constants.placeholderIcon).foregroundColor(.gray)
             case .empty:
                 ProgressView()
             @unknown default:

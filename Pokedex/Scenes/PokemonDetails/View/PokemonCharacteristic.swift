@@ -19,7 +19,7 @@ struct PokemonCharacteristic: View {
         }
         
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: Layout.Spacing.extraSmall) {
             if let characteristicLabel, let characteristicLabelImage {
                 Label(characteristicLabel, systemImage: characteristicLabelImage)
                     .font(.callout)

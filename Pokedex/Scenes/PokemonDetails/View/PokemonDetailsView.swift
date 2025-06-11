@@ -5,13 +5,20 @@ struct PokemonDetailView: View {
     @StateObject var viewModel: PokemonDetailViewModel
     @EnvironmentObject private var router: Router
     
+    // MARK: - Constants
+    private enum Constants {
+        static let loadingMessage = "Loading Pokémon details..."
+        static let errorMessageFormat = "Sorry, couldn't load the details for %@ at this moment, try again later"
+        static let backButtonIcon = "arrow.left"
+    }
+    
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .idle:
                 EmptyView()
             case .loading:
-                LoadingView(message: "Loading Pokémon details...")
+                LoadingView(message: Constants.loadingMessage)
             case .failure:
                 FeedbackView(description: errorMessage) {
                     Task { await viewModel.loadPokemonDetails() }
@@ -41,12 +48,12 @@ struct PokemonDetailView: View {
     
     // MARK: - Private Properties
     private var errorMessage: String {
-        "Sorry, couldn't load the details for \(pokemon.name) at this moment, try again later"
+        String(format: Constants.errorMessageFormat, pokemon.name)
     }
     
     private var backButton: some View {
         Button(action: router.navigateBack) {
-            Image(systemName: "arrow.left")
+            Image(systemName: Constants.backButtonIcon)
                 .foregroundColor(.white)
         }
     }
